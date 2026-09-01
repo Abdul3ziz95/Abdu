@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>عبدالعزيز - مصمم UX/UI ومطور حلول رقمية</title>
+
+    <!-- الخطوط (Fontsource CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cairo@5.0.8/400.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cairo@5.0.8/600.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cairo@5.0.8/700.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cairo@5.0.8/800.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cairo@5.0.8/900.css" />
+    <!-- أيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+        :root {
+            --bg-primary: #0b0b0e;
+            --bg-secondary: #13131a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.07);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a8a8b8;
+            --text-muted: #6a6a7a;
+            --accent: #6c5ce7;
+            --accent-2: #a29bfe;
+            --accent-glow: rgba(108, 92, 231, 0.28);
+            --accent-hover: #7d6ff0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --nav-bg: rgba(11, 11, 14, 0.82);
+            --grid-line: rgba(255, 255, 255, 0.035);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f5fa;
+            --bg-secondary: #ececf2;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-hover: rgba(255, 255, 255, 0.95);
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --text-primary: #1a1a24;
+            --text-secondary: #4a4a5a;
+            --text-muted: #7a7a8a;
+            --accent: #5a4bd1;
+            --accent-2: #7c6ff0;
+            --accent-glow: rgba(90, 75, 209, 0.22);
+            --accent-hover: #6c5ce7;
+            --shadow: 0 8px 32px rgba(20, 20, 50, 0.08);
+            --nav-bg: rgba(245, 245, 250, 0.85);
+            --grid-line: rgba(0, 0, 0, 0.045);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.3s ease;
+        }
+
+        ::selection { background: var(--accent); color: #fff; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 84px 0; position: relative; }
+        .text-center { text-align: center; }
+
+        #progressBar {
+            position: fixed; top: 0; right: 0; height: 3px; width: 0;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            z-index: 1200; border-radius: 0 0 0 4px;
+            box-shadow: 0 0 12px var(--accent-glow);
+            transition: width 0.1s linear;
+        }
+
+        /* ===== تعديلات الاتجاه للغة الإنجليزية (LTR) ===== */
+        [dir="ltr"] #progressBar { right: auto; left: 0; border-radius: 0 0 4px 0; }
+        [dir="ltr"] .nav-links a::after { right: auto; left: 0; }
+        [dir="ltr"] .field-group { text-align: left; }
+        [dir="ltr"] .field-group label .req { margin-right: 0; margin-left: 2px; }
+        [dir="ltr"] .char-counter { text-align: right; }
+        [dir="ltr"] .select-wrapper select { padding-left: 16px; padding-right: 44px; }
+        [dir="ltr"] .select-wrapper::after { left: auto; right: 16px; }
+        [dir="ltr"] .select-wrapper::before { right: auto; left: 16px; }
+        [dir="ltr"] .idea-close { left: auto; right: 16px; }
+        [dir="ltr"] .welcome-progress { right: auto; left: 0; }
+
+        /* ===== الرسالة الترحيبية العصرية ===== */
+        .welcome-toast {
+            position: fixed;
+            top: 85px;
+            right: 50%;
+            transform: translateX(50%) translateY(-30px);
+            background: var(--bg-secondary);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            padding: 16px 28px 19px;
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            z-index: 1300;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            max-width: 92%;
+            cursor: pointer;
+        }
+        .welcome-toast.show {
+            opacity: 1;
+            transform: translateX(50%) translateY(0);
+        }
+        .welcome-emoji {
+            font-size: 30px;
+            display: inline-block;
+            animation: welcomeWave 1.8s ease-in-out;
+        }
+        @keyframes welcomeWave {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(-15deg); }
+            40% { transform: rotate(12deg); }
+            60% { transform: rotate(-8deg); }
+            80% { transform: rotate(5deg); }
+        }
+        .welcome-text {
+            font-size: 16px; font-weight: 800;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+        .welcome-text .accent-name {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+        .welcome-progress {
+            position: absolute; bottom: 0; right: 0;
+            height: 3px; width: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            animation: welcomeProgress 4.5s linear forwards;
+        }
+        @keyframes welcomeProgress {
+            from { width: 100%; }
+            to { width: 0; }
+        }
+
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 14px 0;
+        }
+        .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { font-size: 22px; font-weight: 900; color: var(--text-primary); text-decoration: none; letter-spacing: -0.5px; }
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            font-weight: 700; font-size: 15px; position: relative; transition: color 0.2s ease;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; right: 0;
+            width: 0; height: 2px; border-radius: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.25s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        .nav-actions { display: flex; align-items: center; gap: 8px; }
+        .theme-toggle,
+        .lang-toggle {
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            border-radius: 50%; width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-secondary); font-size: 17px; cursor: pointer; transition: all 0.25s ease;
+        }
+        .lang-toggle {
+            font-size: 13px; font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .theme-toggle:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: scale(1.06) rotate(12deg); }
+        .lang-toggle:hover { background: var(--bg-card-hover); color: var(--accent); transform: scale(1.06) rotate(-12deg); border-color: var(--accent); }
+
+        .menu-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 26px; cursor: pointer; padding: 4px; }
+
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            padding-top: 90px; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+        }
+
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; width: 100%; }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            border-radius: 60px; padding: 8px 18px;
+            font-size: 13px; font-weight: 700; color: var(--text-secondary);
+            margin-bottom: 20px; backdrop-filter: blur(8px);
+        }
+        .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #25d366; box-shadow: 0 0 10px #25d366; animation: blink 1.6s infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+        .hero-content h1 { font-size: 54px; font-weight: 900; line-height: 1.15; margin-bottom: 10px; }
+        .hero-content h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle { font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 16px; }
+        .hero-desc { font-size: 17px; color: var(--text-secondary); max-width: 480px; margin-bottom: 30px; line-height: 1.8; }
+
+        .hero-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            background: var(--accent); color: #fff;
+            padding: 16px 36px; border-radius: 60px;
+            font-weight: 800; font-size: 18px; text-decoration: none;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: all 0.25s ease; border: none; cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 34px var(--accent-glow); background: var(--accent-hover); }
+        .hero-btn:active { transform: translateY(0) scale(0.97); }
+
+        .hero-stats { display: flex; gap: 34px; margin-top: 38px; }
+        .stat b { display: block; font-size: 24px; font-weight: 900; color: var(--text-primary); }
+        .stat span { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+        .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; }
+        .hero-avatar {
+            width: 280px; height: 280px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--border-glass);
+            box-shadow: 0 0 60px var(--accent-glow);
+            position: relative; z-index: 2; background: var(--bg-secondary);
+            pointer-events: none; user-select: none; -webkit-user-drag: none;
+            animation: floatY 6s ease-in-out infinite;
+        }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+
+        .hero-glow {
+            position: absolute; width: 380px; height: 380px; border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            filter: blur(40px); z-index: 1;
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+        }
+        @keyframes pulseGlow { 0% { transform: scale(0.9); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
+
+        .orbit-ring {
+            position: absolute; width: 400px; height: 400px; border-radius: 50%;
+            border: 1px dashed var(--border-glass); z-index: 1;
+            animation: spin 30s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .chip {
+            position: absolute; z-index: 3;
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 14px; padding: 8px 14px;
+            font-size: 13px; font-weight: 800; color: var(--text-primary);
+            box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 7px;
+            animation: floatY 5s ease-in-out infinite;
+        }
+        .chip i { color: var(--accent); }
+        .chip-1 { top: 8%; right: 2%; animation-delay: 0.4s; }
+        .chip-2 { bottom: 14%; right: -4%; animation-delay: 1.2s; }
+        .chip-3 { top: 22%; left: -2%; animation-delay: 2s; }
+
+        .shape { position: absolute; border-radius: 50%; background: var(--accent); opacity: 0.08; z-index: 0; }
+        .shape-1 { width: 200px; height: 200px; top: -60px; right: -80px; }
+        .shape-2 { width: 140px; height: 140px; bottom: -40px; left: -60px; opacity: 0.05; }
+
+        .scroll-hint {
+            position: absolute; bottom: 26px; right: 50%; transform: translateX(50%);
+            color: var(--text-muted); font-size: 20px; animation: bounceDown 1.8s infinite;
+        }
+        @keyframes bounceDown { 0%,100% { transform: translateX(50%) translateY(0); } 50% { transform: translateX(50%) translateY(8px); } }
+
+        .marquee {
+            direction: ltr; overflow: hidden;
+            border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);
+            background: var(--bg-secondary); padding: 16px 0;
+        }
+        .marquee-track { display: flex; gap: 48px; width: max-content; animation: marqueeMove 28s linear infinite; }
+        .marquee:hover .marquee-track { animation-play-state: paused; }
+        .marquee-item {
+            display: flex; align-items: center; gap: 10px;
+            color: var(--text-secondary); font-weight: 700; font-size: 15px; white-space: nowrap;
+        }
+        .marquee-item i { color: var(--accent); }
+        @keyframes marqueeMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        .section-title { font-size: 36px; font-weight: 900; margin-bottom: 12px; }
+        .section-title span {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-sub { color: var(--text-secondary); font-size: 17px; margin-bottom: 42px; }
+
+        .about-card {
+            background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass); border-radius: 28px;
+            padding: 44px 48px; box-shadow: var(--shadow);
+            display: flex; gap: 40px; align-items: flex-start;
+            position: relative; overflow: hidden;
+        }
+        .about-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 140px; height: 140px;
+            background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+            filter: blur(20px); pointer-events: none;
+        }
+        .about-icon {
+            font-size: 40px; color: var(--accent); flex-shrink: 0; margin-top: 4px;
+            width: 78px; height: 78px; border-radius: 22px;
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .about-text p { color: var(--text-secondary); font-size: 17px; line-height: 1.9; }
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+        .service-card {
+            background: var(--bg-card); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-glass); border-radius: 22px;
+            padding: 30px 22px; transition: all 0.3s ease;
+            box-shadow: var(--shadow); text-align: center; position: relative; overflow: hidden;
+        }
+        .service-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 60%);
+            opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .service-card:hover { background: var(--bg-card-hover); transform: translateY(-6px); border-color: var(--accent); }
+        .service-card:hover::after { opacity: 1; }
+        .service-card .icon {
+            font-size: 30px; margin-bottom: 16px; display: inline-flex;
+            align-items: center; justify-content: center;
+            width: 66px; height: 66px; border-radius: 20px;
+            color: var(--accent); background: var(--bg-card); border: 1px solid var(--border-glass);
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover .icon { transform: scale(1.1) rotate(-6deg); }
+        .service-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+        .service-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
+
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 10px; }
+        .why-item {
+            background: var(--bg-card); border-radius: 18px; padding: 26px 20px;
+            border: 1px solid var(--border-glass); text-align: center; transition: all 0.25s ease;
+        }
+        .why-item:hover { background: var(--bg-card-hover); transform: translateY(-4px); border-color: var(--accent); }
+        .why-item .icon { font-size: 28px; color: var(--accent); margin-bottom: 12px; display: block; }
+        .why-item h4 { font-size: 15px; font-weight: 700; line-height: 1.7; }
+
+        .contact-section { text-align: center; }
+        .contact-section .section-title { font-size: 40px; }
+        .contact-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 32px; }
+        .contact-btn {
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 16px 34px; border-radius: 60px;
+            font-weight: 800; font-size: 17px; text-decoration: none;
+            transition: all 0.25s ease; border: none; cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .contact-btn-wa { background: #25d366; color: #fff; box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3); }
+        .contact-btn-wa:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45); }
+        .contact-btn:active { transform: translateY(0) scale(0.97); }
+
+        .social-icons {
+            display: flex; justify-content: center; align-items: center;
+            gap: 14px; margin-top: 36px;
+            flex-wrap: nowrap;
+        }
+        
+        .social-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--bg-card); border: 1.5px solid var(--border-glass);
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--text-secondary); font-size: 22px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            animation: socialFloat 3s ease-in-out infinite;
+        }
+        
+        .social-icon:nth-child(1) { animation-delay: 0s; }
+        .social-icon:nth-child(2) { animation-delay: 0.2s; }
+        .social-icon:nth-child(3) { animation-delay: 0.4s; }
+        .social-icon:nth-child(4) { animation-delay: 0.6s; }
+        .social-icon:nth-child(5) { animation-delay: 0.8s; }
+        .social-icon:nth-child(6) { animation-delay: 1s; }
+        
+        @keyframes socialFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0;
+            transform: scale(0);
+            transition: transform 0.5s ease, opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .social-icon i {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-8px) scale(1.15) rotate(0deg);
+            border-color: transparent;
+            box-shadow: 0 14px 32px var(--social-shadow, rgba(108, 92, 231, 0.35));
+            animation-play-state: paused;
+        }
+
+        .social-icon:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .social-icon:hover i {
+            transform: scale(1.1) rotate(-15deg);
+            color: #fff;
+        }
+
+        .social-icon:active { 
+            transform: translateY(-2px) scale(1.05); 
+            transition: transform 0.1s ease;
+        }
+
+        .social-icon.facebook { --social-shadow: rgba(24, 119, 242, 0.45); }
+        .social-icon.facebook:hover { color: #1877F2; }
+        
+        .social-icon.snapchat { --social-shadow: rgba(255, 252, 0, 0.55); }
+        .social-icon.snapchat:hover { color: #FFFC00; }
+        .social-icon.snapchat:hover i { color: #000; }
+        
+        .social-icon.twitter { --social-shadow: rgba(0, 0, 0, 0.4); }
+        .social-icon.twitter:hover { color: #000; }
+        
+        .social-icon.instagram { --social-shadow: rgba(225, 48, 108, 0.45); }
+        .social-icon.instagram:hover { 
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+            color: transparent;
+        }
+        .social-icon.instagram:hover::before { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
+        
+        .social-icon.tiktok { --social-shadow: rgba(255, 0, 80, 0.45); }
+        .social-icon.tiktok:hover { color: #FF0050; }
+        
+        .social-icon.telegram { --social-shadow: rgba(0, 136, 204, 0.45); }
+        .social-icon.telegram:hover { color: #0088CC; }
+
+        .social-icons .social-icon {
+            opacity: 0;
+            transform: translateY(30px) scale(0.7);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .social-icons.visible .social-icon {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .social-icons.visible .social-icon:nth-child(1) { transition-delay: 0.1s; }
+        .social-icons.visible .social-icon:nth-child(2) { transition-delay: 0.2s; }
+        .social-icons.visible .social-icon:nth-child(3) { transition-delay: 0.3s; }
+        .social-icons.visible .social-icon:nth-child(4) { transition-delay: 0.4s; }
+        .social-icons.visible .social-icon:nth-child(5) { transition-delay: 0.5s; }
+        .social-icons.visible .social-icon:nth-child(6) { transition-delay: 0.6s; }
+
+        footer { border-top: 1px solid var(--border-glass); padding: 30px 0; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+        /* ===== النافذة المنبثقة العصرية ===== */
+        .idea-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(5, 5, 10, 0.62);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .idea-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            width: 100%; max-width: 470px;
+            padding: 36px 30px 30px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+            position: relative;
+            animation: modalUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .idea-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -20%;
+            width: 140%; height: 100%;
+            background: radial-gradient(circle, rgba(37, 211, 102, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .idea-card > * { position: relative; z-index: 1; }
+        @keyframes modalUp {
+            from { transform: translateY(36px) scale(0.94); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .idea-close {
+            position: absolute; top: 16px; left: 16px;
+            width: 38px; height: 38px; border-radius: 50%;
+            background: var(--bg-card); border: 1px solid var(--border-glass);
+            color: var(--text-secondary); font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.25s ease;
+            z-index: 2;
+        }
+        .idea-close:hover { background: var(--bg-card-hover); color: var(--text-primary); transform: rotate(90deg); }
+
+        .idea-icon {
+            width: 66px; height: 66px; border-radius: 22px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: #fff;
+            margin: 0 auto 16px;
+            box-shadow: 0 10px 28px rgba(37, 211, 102, 0.35);
+            animation: iconPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.4) both;
+        }
+        @keyframes iconPop {
+            from { transform: scale(0) rotate(-30deg); }
+            to { transform: scale(1) rotate(0); }
+        }
+
+        .idea-card h3 { font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .idea-card .idea-sub { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 24px; font-weight: 600; }
+
+        .field-group { margin-bottom: 16px; text-align: right; }
+        .field-group label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; font-weight: 800;
+            margin-bottom: 8px; color: var(--text-primary);
+        }
+        .field-group label i {
+            color: #25d366;
+            font-size: 13px;
+        }
+        .field-group label .req { color: #ff6b6b; margin-right: 2px; }
+        .field-group input,
+        .field-group textarea,
+        .field-group select {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 13px 16px;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px; font-weight: 600;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.2s ease;
+            outline: none;
+        }
+        .field-group input::placeholder,
+        .field-group textarea::placeholder { color: var(--text-muted); font-weight: 600; }
+        .field-group input:focus,
+        .field-group textarea:focus,
+        .field-group select:focus {
+            border-color: #25d366;
+            box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.14);
+            background: var(--bg-card-hover);
+            transform: translateY(-1px);
+        }
+        .field-group textarea { min-height: 110px; resize: none; line-height: 1.7; }
+
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-left: 44px;
+            cursor: pointer;
+        }
+        .select-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: transform 0.3s ease, color 0.25s ease;
+        }
+        .select-wrapper:focus-within::after {
+            color: #25d366;
+            transform: translateY(-50%) rotate(180deg);
+        }
+        .select-wrapper::before {
+            content: '\f0ae';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #25d366;
+            font-size: 15px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .select-wrapper select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 10px;
+            font-weight: 700;
+        }
+
+        .field-error { border-color: #ff6b6b !important; box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.14) !important; }
+        .shake { animation: shakeX 0.4s ease; }
+        @keyframes shakeX {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-7px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        .char-counter {
+            display: block; text-align: left;
+            font-size: 12px; color: var(--text-muted);
+            font-weight: 700; margin-top: 5px;
+            transition: color 0.25s ease;
+        }
+        .char-counter.warn { color: #ff9f43; }
+
+        .auto-filled {
+            animation: autoFillPulse 0.6s ease;
+        }
+        @keyframes autoFillPulse {
+            0% { background: var(--bg-card); }
+            50% { background: rgba(37, 211, 102, 0.15); border-color: #25d366; }
+            100% { background: var(--bg-card); }
+        }
+
+        .idea-send {
+            width: 100%; margin-top: 8px;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: #fff;
+            border: none; border-radius: 16px;
+            padding: 15px; font-size: 17px; font-weight: 800;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 22px rgba(37, 211, 102, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .idea-send::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .idea-send:hover::before {
+            left: 100%;
+        }
+        .idea-send:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.45); 
+        }
+        .idea-send:active { transform: translateY(0) scale(0.98); }
+        .idea-send.sent { background: linear-gradient(135deg, #128c7e 0%, #0d6e5f 100%); pointer-events: none; }
+
+        .idea-note {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            font-size: 12px; color: var(--text-muted); font-weight: 700;
+            margin-top: 14px;
+        }
+        .idea-note i { font-size: 11px; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .services-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .services-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
+        .services-grid .reveal:nth-child(4) { transition-delay: 0.3s; }
+        .why-grid .reveal:nth-child(2) { transition-delay: 0.12s; }
+        .why-grid .reveal:nth-child(3) { transition-delay: 0.24s; }
+
+        @media (max-width: 992px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-content h1 { font-size: 40px; }
+            .hero-desc { margin-left: auto; margin-right: auto; }
+            .hero-stats { justify-content: center; }
+            .hero-visual { order: -1; }
+            .hero-avatar { width: 210px; height: 210px; }
+            .hero-glow { width: 290px; height: 290px; }
+            .orbit-ring { width: 300px; height: 300px; }
+            .chip-1 { right: 12%; } .chip-2 { right: 6%; } .chip-3 { left: 8%; }
+            .about-card { flex-direction: column; align-items: center; text-align: center; padding: 34px 24px; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar .container { flex-wrap: wrap; }
+            .nav-links {
+                display: none; flex-direction: column; width: 100%; gap: 12px;
+                padding: 16px 0 8px; border-top: 1px solid var(--border-glass); margin-top: 12px;
+            }
+            .nav-links.open { display: flex; }
+            .menu-toggle { display: block; }
+            section { padding: 56px 0; }
+            .hero { min-height: auto; padding: 110px 0 70px; }
+            .hero-content h1 { font-size: 32px; }
+            .hero-subtitle { font-size: 17px; }
+            .hero-desc { font-size: 15px; }
+            .hero-btn { font-size: 16px; padding: 14px 28px; }
+            .hero-stats { gap: 22px; }
+            .stat b { font-size: 20px; }
+            .section-title { font-size: 28px; }
+            .services-grid { grid-template-columns: 1fr 1fr; }
+            .why-grid { grid-template-columns: 1fr; }
+            .contact-buttons { flex-direction: column; align-items: center; }
+            .contact-btn { width: 100%; max-width: 300px; justify-content: center; }
+            .social-icons { gap: 12px; }
+            .social-icon { width: 50px; height: 50px; font-size: 20px; }
+            .scroll-hint { display: none; }
+            .welcome-text { font-size: 14px; }
+            .welcome-emoji { font-size: 26px; }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 28px; }
+            .hero-avatar { width: 170px; height: 170px; }
+            .hero-glow { width: 230px; height: 230px; }
+            .orbit-ring { width: 240px; height: 240px; }
+            .chip { font-size: 11px; padding: 6px 10px; }
+            .idea-card { padding: 30px 20px 24px; border-radius: 22px; }
+            .idea-card h3 { font-size: 19px; }
+            .social-icons { gap: 8px; }
+            .social-icon { width: 44px; height: 44px; font-size: 18px; }
+            .theme-toggle, .lang-toggle { width: 38px; height: 38px; }
+            .lang-toggle { font-size: 11px; }
+        }
+
+        @media (max-width: 360px) {
+            .social-icons { gap: 6px; }
+            .social-icon { width: 40px; height: 40px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progressBar"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#hero" class="nav-logo" data-i18n="nav_logo">عبد<span>العزيز</span></a>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="active" data-i18n="nav_home">الرئيسية</a></li>
+                <li><a href="#about" data-i18n="nav_about">نبذة عني</a></li>
+                <li><a href="#services" data-i18n="nav_services">مهاراتي</a></li>
+                <li><a href="#contact" data-i18n="nav_contact">تواصل معي</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="lang-toggle" id="langToggle" data-i18n-aria="lang_aria" aria-label="Switch language">EN</button>
+                <button class="theme-toggle" id="themeToggle" data-i18n-aria="theme_aria" aria-label="تبديل الوضع">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="menu-toggle" id="menuToggle" data-i18n-aria="menu_aria" aria-label="القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="hero-badge"><span class="dot"></span> <span data-i18n="hero_badge">متاح لمشاريع جديدة</span></div>
+                <h1 data-i18n="hero_title">عبدالعزيز <span class="highlight">خليفة</span></h1>
+                <div class="hero-subtitle" data-i18n="hero_subtitle">UX/UI Designer &amp; AI-Assisted Developer</div>
+                <p class="hero-desc" data-i18n="hero_desc">
+                    أصمم وأطور تجارب رقمية عصرية تجمع بين التصميم، البرمجة والذكاء الاصطناعي.
+                </p>
+                <button type="button" class="hero-btn" onclick="openIdeaModal()" data-i18n="hero_btn">
+                    <i class="fa-brands fa-whatsapp"></i> 💬 تواصل معي
+                </button>
+                <div class="hero-stats">
+                    <div class="stat"><b>+20</b><span data-i18n="stat_projects">مشروع منجز</span></div>
+                    <div class="stat"><b>+15</b><span data-i18n="stat_clients">عميل سعيد</span></div>
+                    <div class="stat"><b>3+</b><span data-i18n="stat_years">سنوات خبرة</span></div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-glow"></div>
+                <div class="orbit-ring"></div>
+                <img src="profile.jpg" alt="عبدالعزيز خليفة" class="hero-avatar" draggable="false" data-i18n-alt="avatar_alt" />
+                <div class="chip chip-1"><i class="fas fa-pen-nib"></i> UX/UI</div>
+                <div class="chip chip-2"><i class="fas fa-robot"></i> AI Tools</div>
+                <div class="chip chip-3"><i class="fas fa-code"></i> Web Dev</div>
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+        </div>
+        <div class="scroll-hint"><i class="fas fa-chevron-down"></i></div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+        <div class="marquee-track" id="marqueeTrack">
+            <span class="marquee-item"><i class="fab fa-figma"></i> Figma</span>
+            <span class="marquee-item"><i class="fas fa-wand-magic-sparkles"></i> AI Tools</span>
+            <span class="marquee-item"><i class="fab fa-html5"></i> HTML5</span>
+            <span class="marquee-item"><i class="fab fa-css3-alt"></i> CSS3</span>
+            <span class="marquee-item"><i class="fab fa-js"></i> JavaScript</span>
+            <span class="marquee-item"><i class="fas fa-mobile-screen"></i> Responsive Design</span>
+            <span class="marquee-item"><i class="fas fa-object-group"></i> Prototyping</span>
+            <span class="marquee-item"><i class="fas fa-users"></i> User Research</span>
+        </div>
+    </div>
+
+    <section id="about">
+        <div class="container">
+            <div class="about-card reveal">
+                <div class="about-icon"><i class="fas fa-user-astronaut"></i></div>
+                <div class="about-text">
+                    <h2 class="section-title" style="margin-bottom:12px;" data-i18n="about_title">نبذة <span>عنّي</span></h2>
+                    <p data-i18n="about_p">
+                        أنا عبدالعزيز، مصمم UX/UI ومطور حلول رقمية، أعمل على تصميم واجهات التطبيقات والمواقع وتطوير أفكار رقمية باستخدام البرمجة والذكاء الاصطناعي.
+                        <br><br>
+                        أركز على الجمع بين التصميم الجميل، سهولة الاستخدام، وتحويل الأفكار إلى منتجات رقمية عملية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <div class="text-center reveal">
+                <h2 class="section-title" data-i18n="services_title">ماذا أستطيع أن <span>أقدم لك؟</span></h2>
+                <p class="section-sub" data-i18n="services_sub">خدمات أصممها بعناية لتحويل فكرتك إلى منتج رقمي متكامل.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <span class="icon"><i class="fas fa-paint-brush"></i></span>
+                    <h3 data-i18n="svc1_title">🎨 تصميم UX/UI</h3>
+                    <p data-i18n="svc1_desc">تصميم تطبيقات ومواقع عصرية مع التركيز على تجربة المستخدم وسهولة الاستخدام.</p>
+                </div>
+                <div class="service-card reveal">
+                    <span class="icon"><i class="fas fa-code"></i></span>
+                    <h3 data-i18n="svc2_title">💻 تطوير المواقع والتطبيقات</h3>
+                    <p data-i18n="svc2_desc">تحويل الأفكار والتصاميم إلى منتجات رقمية عملية ومتجاوبة.</p>
+                </div>
+                <div class="service-card reveal">
+                    <span class="icon"><i class="fas fa-robot"></i></span>
+                    <h3 data-i18n="svc3_title">🤖 حلول باستخدام الذكاء الاصطناعي</h3>
+                    <p data-i18n="svc3_desc">استخدام أدوات الذكاء الاصطناعي لتسريع التصميم والتطوير وبناء حلول رقمية مبتكرة.</p>
+                </div>
+                <div class="service-card reveal">
+                    <span class="icon"><i class="fas fa-globe"></i></span>
+                    <h3 data-i18n="svc4_title">📱 تطبيقات الويب</h3>
+                    <p data-i18n="svc4_desc">إنشاء تجارب ويب حديثة ومتوافقة مع الجوال والكمبيوتر.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why">
+        <div class="container">
+            <div class="text-center reveal">
+                <h2 class="section-title" data-i18n="why_title">لماذا أعمل بهذه <span>الطريقة؟</span></h2>
+                <p class="section-sub" data-i18n="why_sub">مبادئ أقوم عليها في كل مشروع.</p>
+            </div>
+            <div class="why-grid">
+                <div class="why-item reveal">
+                    <span class="icon"><i class="fas fa-bullseye"></i></span>
+                    <h4 data-i18n="why1">🎯 أفكر في تجربة المستخدم أولًا.</h4>
+                </div>
+                <div class="why-item reveal">
+                    <span class="icon"><i class="fas fa-brain"></i></span>
+                    <h4 data-i18n="why2">⚡ أستخدم الذكاء الاصطناعي لتسريع التصميم والتطوير.</h4>
+                </div>
+                <div class="why-item reveal">
+                    <span class="icon"><i class="fas fa-star"></i></span>
+                    <h4 data-i18n="why3">✨ أهتم بالتفاصيل البصرية والوظيفية.</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="reveal">
+                <h2 class="section-title" data-i18n="contact_title">لديك <span>فكرة؟</span></h2>
+                <p style="color:var(--text-secondary); font-size:20px; font-weight:600;" data-i18n="contact_sub">لنحوّلها إلى شيء حقيقي.</p>
+            </div>
+            <div class="contact-buttons reveal">
+                <button type="button" class="contact-btn contact-btn-wa" onclick="openIdeaModal()" data-i18n="contact_btn">
+                    <i class="fa-brands fa-whatsapp"></i> 💬 أرسل فكرتك عبر واتساب
+                </button>
+            </div>
+            <div class="social-icons reveal">
+                <a href="https://facebook.com/abdul3ziz95" target="_blank" rel="noopener" class="social-icon facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.snapchat.com/add/alhawari249" target="_blank" rel="noopener" class="social-icon snapchat" aria-label="Snapchat">
+                    <i class="fab fa-snapchat-ghost"></i>
+                </a>
+                <a href="https://x.com/abdul3ziz95" target="_blank" rel="noopener" class="social-icon twitter" aria-label="X">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="https://instagram.com/abdul3ziz95" target="_blank" rel="noopener" class="social-icon instagram" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://tiktok.com/@abdul3ziz95" target="_blank" rel="noopener" class="social-icon tiktok" aria-label="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://t.me/abdul3ziz95" target="_blank" rel="noopener" class="social-icon telegram" aria-label="Telegram">
+                    <i class="fab fa-telegram-plane"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            &copy; <span id="year"></span> Abdul3ziz95 &bull; <span data-i18n="footer_rights">جميع الحقوق محفوظة</span>
+        </div>
+    </footer>
+
+    <!-- ===== النافذة المنبثقة: أرسل فكرتك ===== -->
+    <div id="ideaOverlay" class="idea-overlay" style="display: none;">
+        <div class="idea-card">
+            <button type="button" class="idea-close" onclick="closeIdeaModal()" data-i18n-aria="close_aria" aria-label="إغلاق">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="idea-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <h3 data-i18n="modal_title">أرسل فكرتك 💡</h3>
+            <p class="idea-sub" data-i18n="modal_sub">اختر نوع مشروعك أو اكتب تفاصيلك يدوياً</p>
+
+            <form id="ideaForm" novalidate>
+                <div class="field-group">
+                    <label for="projectType">
+                        <i class="fas fa-layer-group"></i>
+                        <span data-i18n="label_type">نوع المشروع</span> <span class="req">*</span>
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="projectType" required>
+                            <option value="company" data-i18n="opt_company">🏢 موقع تعريفي لشركة</option>
+                            <option value="personal" data-i18n="opt_personal">👤 موقع شخصي</option>
+                            <option value="bukhari" data-i18n="opt_bukhari">🍗 مينو مطعم بخاري</option>
+                            <option value="foul" data-i18n="opt_foul">🥘 مينو فوال</option>
+                            <option value="buffet" data-i18n="opt_buffet">🌯 مينو بوفيه</option>
+                            <option value="salon" data-i18n="opt_salon">💇‍♀️💇‍♂️ حجز موعد للصالونات</option>
+                            <option value="clinic" data-i18n="opt_clinic">🩺 حجز موعد للعيادات</option>
+                            <option value="attendance" data-i18n="opt_attendance">📋 تطبيق لتسجيل الحضور والانصراف</option>
+                            <option value="other" selected data-i18n="opt_other">✨ آخر (سأكتب بنفسي)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="ideaTitle">
+                        <i class="fas fa-heading"></i>
+                        <span data-i18n="label_title">عنوان الفكرة</span> <span class="req">*</span>
+                    </label>
+                    <input type="text" id="ideaTitle" placeholder="مثال: منصة حجز مواعيد للعيادات" maxlength="80" autocomplete="off" data-i18n-placeholder="ph_title" />
+                </div>
+
+                <div class="field-group">
+                    <label for="ideaDesc">
+                        <i class="fas fa-align-right"></i>
+                        <span data-i18n="label_desc">وصف الفكرة باختصار</span> <span class="req">*</span>
+                    </label>
+                    <textarea id="ideaDesc" placeholder="اشرح فكرتك باختصار: ما المشكلة التي تحلها؟ ولمن هذا المنتج؟" maxlength="600" data-i18n-placeholder="ph_desc"></textarea>
+                    <span class="char-counter" id="charCounter">0 / 600</span>
+                </div>
+
+                <button type="submit" class="idea-send" id="sendIdeaBtn" data-i18n="send_btn">
+                    <i class="fa-brands fa-whatsapp"></i> إرسال عبر واتساب
+                </button>
+            </form>
+
+            <div class="idea-note" data-i18n="modal_note">
+                <i class="fas fa-lock"></i> سيتم فتح واتساب برسالة جاهزة تحتوي على تفاصيل فكرتك
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== فتح الموقع من الأعلى دائماً =====
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 0);
+        });
+
+        // ===== السنة =====
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ===== الثيم (الافتراضي: نهاري) =====
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        let savedTheme = localStorage.getItem('theme') || 'light';
+
+        function applyTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+            themeIcon.className = themeName === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+        });
+
+        // =====================================================
+        // ===== نظام الترجمة الكامل (عربي / إنجليزي) =====
+        // =====================================================
+        const translations = {
+            ar: {
+                pageTitle: 'عبدالعزيز - مصمم UX/UI ومطور حلول رقمية',
+                nav_logo: 'عبد<span>العزيز</span>',
+                nav_home: 'الرئيسية',
+                nav_about: 'نبذة عني',
+                nav_services: 'مهاراتي',
+                nav_contact: 'تواصل معي',
+                theme_aria: 'تبديل الوضع',
+                lang_aria: 'تبديل اللغة',
+                menu_aria: 'القائمة',
+                hero_badge: 'متاح لمشاريع جديدة',
+                hero_title: 'عبدالعزيز <span class="highlight">خليفة</span>',
+                hero_subtitle: 'UX/UI Designer &amp; AI-Assisted Developer',
+                hero_desc: 'أصمم وأطور تجارب رقمية عصرية تجمع بين التصميم، البرمجة والذكاء الاصطناعي.',
+                hero_btn: '<i class="fa-brands fa-whatsapp"></i> 💬 تواصل معي',
+                stat_projects: 'مشروع منجز',
+                stat_clients: 'عميل سعيد',
+                stat_years: 'سنوات خبرة',
+                avatar_alt: 'عبدالعزيز خليفة',
+                about_title: 'نبذة <span>عنّي</span>',
+                about_p: 'أنا عبدالعزيز، مصمم UX/UI ومطور حلول رقمية، أعمل على تصميم واجهات التطبيقات والمواقع وتطوير أفكار رقمية باستخدام البرمجة والذكاء الاصطناعي.<br><br>أركز على الجمع بين التصميم الجميل، سهولة الاستخدام، وتحويل الأفكار إلى منتجات رقمية عملية.',
+                services_title: 'ماذا أستطيع أن <span>أقدم لك؟</span>',
+                services_sub: 'خدمات أصممها بعناية لتحويل فكرتك إلى منتج رقمي متكامل.',
+                svc1_title: '🎨 تصميم UX/UI',
+                svc1_desc: 'تصميم تطبيقات ومواقع عصرية مع التركيز على تجربة المستخدم وسهولة الاستخدام.',
+                svc2_title: '💻 تطوير المواقع والتطبيقات',
+                svc2_desc: 'تحويل الأفكار والتصاميم إلى منتجات رقمية عملية ومتجاوبة.',
+                svc3_title: '🤖 حلول باستخدام الذكاء الاصطناعي',
+                svc3_desc: 'استخدام أدوات الذكاء الاصطناعي لتسريع التصميم والتطوير وبناء حلول رقمية مبتكرة.',
+                svc4_title: '📱 تطبيقات الويب',
+                svc4_desc: 'إنشاء تجارب ويب حديثة ومتوافقة مع الجوال والكمبيوتر.',
+                why_title: 'لماذا أعمل بهذه <span>الطريقة؟</span>',
+                why_sub: 'مبادئ أقوم عليها في كل مشروع.',
+                why1: '🎯 أفكر في تجربة المستخدم أولًا.',
+                why2: '⚡ أستخدم الذكاء الاصطناعي لتسريع التصميم والتطوير.',
+                why3: '✨ أهتم بالتفاصيل البصرية والوظيفية.',
+                contact_title: 'لديك <span>فكرة؟</span>',
+                contact_sub: 'لنحوّلها إلى شيء حقيقي.',
+                contact_btn: '<i class="fa-brands fa-whatsapp"></i> 💬 أرسل فكرتك عبر واتساب',
+                footer_rights: 'جميع الحقوق محفوظة',
+                modal_title: 'أرسل فكرتك 💡',
+                modal_sub: 'اختر نوع مشروعك أو اكتب تفاصيلك يدوياً',
+                close_aria: 'إغلاق',
+                label_type: 'نوع المشروع',
+                opt_company: '🏢 موقع تعريفي لشركة',
+                opt_personal: '👤 موقع شخصي',
+                opt_bukhari: '🍗 مينو مطعم بخاري',
+                opt_foul: '🥘 مينو فوال',
+                opt_buffet: '🌯 مينو بوفيه',
+                opt_salon: '💇‍♀️‍♂️ حجز موعد للصالونات',
+                opt_clinic: '🩺 حجز موعد للعيادات',
+                opt_attendance: '📋 تطبيق لتسجيل الحضور والانصراف',
+                opt_other: '✨ آخر (سأكتب بنفسي)',
+                label_title: 'عنوان الفكرة',
+                ph_title: 'مثال: منصة حجز مواعيد للعيادات',
+                label_desc: 'وصف الفكرة باختصار',
+                ph_desc: 'اشرح فكرتك باختصار: ما المشكلة التي تحلها؟ ولمن هذا المنتج؟',
+                send_btn: '<i class="fa-brands fa-whatsapp"></i> إرسال عبر واتساب',
+                sent_btn: '<i class="fas fa-check"></i> تم تجهيز فكرتك!',
+                modal_note: '<i class="fas fa-lock"></i> سيتم فتح واتساب برسالة جاهزة تحتوي على تفاصيل فكرتك',
+                welcome_morning: 'صباح الخير! أهلاً بك في موقع <span class="accent-name">عبدالعزيز</span>',
+                welcome_noon: 'نهارك سعيد! أهلاً بك في موقع <span class="accent-name">عبدالعزيز</span>',
+                welcome_evening: 'مساء الخير! أهلاً بك في موقع <span class="accent-name">عبدالعزيز</span>',
+                wa_greeting: 'مرحباً عبدالعزيز 👋',
+                wa_intro: 'لدي فكرة أود تحويلها إلى منتج رقمي:',
+                wa_type: '🎯 نوع المشروع: ',
+                wa_title: '💡 عنوان الفكرة: ',
+                wa_desc: '📝 وصف الفكرة: '
+            },
+            en: {
+                pageTitle: 'Abdulaziz - UX/UI Designer & Digital Solutions Developer',
+                nav_logo: 'Abdul<span>aziz</span>',
+                nav_home: 'Home',
+                nav_about: 'About Me',
+                nav_services: 'My Skills',
+                nav_contact: 'Contact Me',
+                theme_aria: 'Toggle theme',
+                lang_aria: 'Switch language',
+                menu_aria: 'Menu',
+                hero_badge: 'Available for new projects',
+                hero_title: 'Abdulaziz <span class="highlight">Khalifa</span>',
+                hero_subtitle: 'UX/UI Designer &amp; AI-Assisted Developer',
+                hero_desc: 'I design and develop modern digital experiences that blend design, coding, and artificial intelligence.',
+                hero_btn: '<i class="fa-brands fa-whatsapp"></i> 💬 Contact Me',
+                stat_projects: 'Projects Completed',
+                stat_clients: 'Happy Clients',
+                stat_years: 'Years of Experience',
+                avatar_alt: 'Abdulaziz Khalifa',
+                about_title: 'About <span>Me</span>',
+                about_p: "I'm Abdulaziz, a UX/UI designer and digital solutions developer. I design app and website interfaces and build digital ideas using coding and artificial intelligence.<br><br>I focus on combining beautiful design, ease of use, and turning ideas into practical digital products.",
+                services_title: 'What Can I <span>Offer You?</span>',
+                services_sub: 'Services I carefully craft to turn your idea into a complete digital product.',
+                svc1_title: '🎨 UX/UI Design',
+                svc1_desc: 'Designing modern apps and websites with a focus on user experience and ease of use.',
+                svc2_title: '💻 Web & App Development',
+                svc2_desc: 'Turning ideas and designs into practical, responsive digital products.',
+                svc3_title: '🤖 AI-Powered Solutions',
+                svc3_desc: 'Using AI tools to accelerate design and development and build innovative digital solutions.',
+                svc4_title: '📱 Web Applications',
+                svc4_desc: 'Creating modern web experiences compatible with mobile and desktop.',
+                why_title: 'Why Do I Work This <span>Way?</span>',
+                why_sub: 'Principles I stand on in every project.',
+                why1: '🎯 I think about the user experience first.',
+                why2: '⚡ I use AI to accelerate design and development.',
+                why3: '✨ I pay attention to visual and functional details.',
+                contact_title: 'Got an <span>Idea?</span>',
+                contact_sub: "Let's turn it into something real.",
+                contact_btn: '<i class="fa-brands fa-whatsapp"></i> 💬 Send Your Idea via WhatsApp',
+                footer_rights: 'All rights reserved',
+                modal_title: 'Send Your Idea 💡',
+                modal_sub: 'Choose your project type or write your details manually',
+                close_aria: 'Close',
+                label_type: 'Project Type',
+                opt_company: '🏢 Company Website',
+                opt_personal: '👤 Personal Website',
+                opt_bukhari: '🍗 Bukhari Restaurant Menu',
+                opt_foul: '🥘 Foul & Falafel Menu',
+                opt_buffet: '🌯 Buffet Menu',
+                opt_salon: '💇‍♀️💇‍♂️ Salon Appointment Booking',
+                opt_clinic: '🩺 Clinic Appointment Booking',
+                opt_attendance: '📋 Attendance & Departure Tracking App',
+                opt_other: '✨ Other (I will write it myself)',
+                label_title: 'Idea Title',
+                ph_title: 'e.g., Clinic appointment booking platform',
+                label_desc: 'Brief Idea Description',
+                ph_desc: 'Briefly explain your idea: what problem does it solve? Who is this product for?',
+                send_btn: '<i class="fa-brands fa-whatsapp"></i> Send via WhatsApp',
+                sent_btn: '<i class="fas fa-check"></i> Your idea is ready!',
+                modal_note: '<i class="fas fa-lock"></i> WhatsApp will open with a ready-made message containing your idea details',
+                welcome_morning: 'Good morning! Welcome to <span class="accent-name">Abdulaziz</span>&#39;s website',
+                welcome_noon: 'Have a wonderful day! Welcome to <span class="accent-name">Abdulaziz</span>&#39;s website',
+                welcome_evening: 'Good evening! Welcome to <span class="accent-name">Abdulaziz</span>&#39;s website',
+                wa_greeting: 'Hello Abdulaziz 👋',
+                wa_intro: 'I have an idea I would like to turn into a digital product:',
+                wa_type: '🎯 Project Type: ',
+                wa_title: '💡 Idea Title: ',
+                wa_desc: '📝 Idea Description: '
+            }
+        };
+
+        // ===== القوالب الجاهزة باللغتين =====
+        const projectTemplates = {
+            ar: {
+                company: {
+                    title: 'موقع تعريفي احترافي للشركة',
+                    desc: 'أرغب في تصميم موقع تعريفي عصري يعكس هوية شركتي بشكل احترافي. الموقع يجب أن يتضمن صفحات (الرئيسية، من نحن، خدماتنا، أعمالنا، تواصل معنا) مع تصميم متجاوب يعمل بسلاسة على جميع الأجهزة. أريد لمسات تفاعلية وحركات سلسة تعطي انطباعاً حديثاً، مع تحسين محركات البحث (SEO) وسرعة تحميل عالية.'
+                },
+                personal: {
+                    title: 'موقع شخصي احترافي',
+                    desc: 'أريد موقعاً شخصياً أنيقاً يعرض سيرتي الذاتية، مهاراتي، وأعمالي بتصميم عصري وجذاب. يجب أن يتضمن أقساماً للتعريف بي، معرض أعمالي، خبراتي، ووسائل التواصل معي. أريد تصميماً فريداً يميزني عن الآخرين مع تأثيرات حركية سلسة وتجربة مستخدم ممتازة على جميع الأجهزة.'
+                },
+                bukhari: {
+                    title: 'مينو رقمي لمطعم بخاري',
+                    desc: 'أرغب في تصميم مينو رقمي تفاعلي لمطعم بخاري يعرض الأطباق بشكل شهي وجذاب مع صور عالية الجودة. المنيو يجب أن يكون مقسماً إلى أقسام واضحة (مقبلات، أطباق رئيسية، مشويات، مشروبات) مع الأسعار والوصف. أريد تصميماً يعكس أصالة المطبخ البخاري بلمسة عصرية، وسرعة تحميل عالية، وإمكانية الوصول عبر رمز QR.'
+                },
+                foul: {
+                    title: 'مينو رقمي لمطعم فول وفلافل',
+                    desc: 'أحتاج إلى مينو رقمي عصري لمطعم فول وفلافل يعرض أصناف الفطور والغداء بتصميم دافئ وجذاب. المنيو يجب أن يشمل أقساماً (فول، فلافل، سندويشات، إفطار شعبي، وجبات عائلية) مع الصور والأسعار. أريد تصميماً يعكس أجواء المطعم الشعبية بلمسة حديثة، وسهولة التصفح من الجوال، وإمكانية المشاركة عبر رابط أو QR Code.'
+                },
+                buffet: {
+                    title: 'مينو رقمي لبوفيه مفتوح',
+                    desc: 'أرغب في تصميم مينو رقمي شامل لمطعم بوفيه مفتوح يعرض جميع الأصناف المتوفرة (مشويات، مأكولات بحرية، سلطات، حلويات، مشروبات) مع التفاصيل والأسعار. أريد إضافة ميزة فلترة الأصناف حسب النوع، وعرض العروض اليومية، وتصميم تفاعلي يسهل على الزبون تصفح المنيو من خلال رابط أو QR Code.'
+                },
+                salon: {
+                    title: 'نظام حجز موعد للصالونات',
+                    desc: 'أرغب في تطوير نظام حجز موعد عصري للصالونات يتيح للعملاء حجز مواعيدهم بسهولة عبر واجهة أنيقة وبسيطة. النظام يجب أن يعرض الخدمات المتاحة، الأسعار، وأوقات الفراغ بشكل مرئي وجذاب. يتضمن لوحة تحكم لإدارة الحجوزات، وإشعارات تذكير تلقائية عبر واتساب، مع إمكانية الدفع الإلكتروني أو عند الاستلام.'
+                },
+                clinic: {
+                    title: 'نظام حجز موعد للعيادات',
+                    desc: 'أحتاج إلى نظام حجز موعد ذكي وآمن للعيادات الطبية يتيح للمرضى حجز مواعيدهم بسهولة مع اختيار الطبيب والتخصص والوقت المناسب. النظام يجب أن يتضمن لوحة تحكم للأطباء، وإرسال تذكيرات تلقائية، مع ضمان خصوصية بيانات المرضى وتشفيرها بالكامل وفقاً لأعلى معايير الأمان والامتثال للوائح الصحية.'
+                },
+                attendance: {
+                    title: 'تطبيق لتسجيل الحضور والانصراف',
+                    desc: 'أرغب في تطوير تطبيق عصري وآمن لتسجيل حضور وانصراف الموظفين، يعتمد على تقنيات حديثة مثل التعرف على الوجه أو البصمة أو رمز QR. التطبيق يجب أن يوفر لوحة تحكم للمدير لمتابعة سجلات الحضور، وتقارير شهرية، وإشعارات فورية. مع ضمان أعلى مستويات الأمان وحماية البيانات، وتشفير المعلومات، وصلاحيات وصول محددة.'
+                },
+                other: { title: '', desc: '' }
+            },
+            en: {
+                company: {
+                    title: 'Professional Company Website',
+                    desc: "I would like a modern corporate website that professionally reflects my company's identity. The site should include pages (Home, About Us, Services, Portfolio, Contact) with a fully responsive design that works smoothly on all devices. I want interactive touches and smooth animations that give a modern impression, along with SEO optimization and fast loading speeds."
+                },
+                personal: {
+                    title: 'Professional Personal Website',
+                    desc: 'I want an elegant personal website that showcases my resume, skills, and work with a modern, attractive design. It should include sections about me, a portfolio gallery, my experience, and ways to contact me. I want a unique design that sets me apart, with smooth animations and an excellent user experience on all devices.'
+                },
+                bukhari: {
+                    title: 'Digital Menu for Bukhari Restaurant',
+                    desc: 'I would like an interactive digital menu for a Bukhari restaurant that presents dishes appetizingly with high-quality images. The menu should be divided into clear sections (appetizers, main dishes, grilled items, beverages) with prices and descriptions. I want a design that reflects the authenticity of Bukhari cuisine with a modern touch, fast loading, and QR code access.'
+                },
+                foul: {
+                    title: 'Digital Menu for Foul & Falafel Restaurant',
+                    desc: "I need a modern digital menu for a foul and falafel restaurant showcasing breakfast and lunch items with a warm, appealing design. The menu should include sections (foul, falafel, sandwiches, traditional breakfast, family meals) with images and prices. I want a design that reflects the restaurant's popular atmosphere with a modern touch, easy mobile browsing, and sharing via link or QR code."
+                },
+                buffet: {
+                    title: 'Digital Menu for Open Buffet',
+                    desc: 'I would like a comprehensive digital menu for an open buffet restaurant displaying all available items (grills, seafood, salads, desserts, beverages) with details and prices. I want to add filtering by category, display daily offers, and an interactive design that makes it easy for customers to browse the menu via a link or QR code.'
+                },
+                salon: {
+                    title: 'Salon Appointment Booking System',
+                    desc: 'I would like a modern salon appointment booking system that lets clients book easily through an elegant, simple interface. The system should display available services, prices, and free slots visually and attractively. It includes an admin dashboard for managing bookings, automatic WhatsApp reminders, and online or on-site payment options.'
+                },
+                clinic: {
+                    title: 'Clinic Appointment Booking System',
+                    desc: 'I need a smart, secure clinic appointment booking system that lets patients book easily by choosing the doctor, specialty, and suitable time. The system should include a dashboard for doctors, automatic reminders, and full privacy and encryption of patient data in compliance with the highest security standards and health regulations.'
+                },
+                attendance: {
+                    title: 'Attendance & Departure Tracking App',
+                    desc: 'I would like a modern, secure app for tracking employee attendance and departure, relying on modern technologies such as face recognition, fingerprint, or QR code. The app should provide an admin dashboard to follow attendance records, monthly reports, and instant notifications, with the highest levels of security, data protection, encryption, and defined access permissions.'
+                },
+                other: { title: '', desc: '' }
+            }
+        };
+
+        // ===== تطبيق اللغة =====
+        const langToggle = document.getElementById('langToggle');
+        let currentLang = localStorage.getItem('lang') || 'ar';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            localStorage.setItem('lang', lang);
+            document.title = translations[lang].pageTitle;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key] !== undefined) el.innerHTML = translations[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key] !== undefined) el.setAttribute('placeholder', translations[lang][key]);
+            });
+            document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+                const key = el.getAttribute('data-i18n-alt');
+                if (translations[lang][key] !== undefined) el.setAttribute('alt', translations[lang][key]);
+            });
+            document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+                const key = el.getAttribute('data-i18n-aria');
+                if (translations[lang][key] !== undefined) el.setAttribute('aria-label', translations[lang][key]);
+            });
+
+            langToggle.textContent = lang === 'ar' ? 'EN' : 'AR';
+
+            // إعادة ملء القالب إذا كان هناك نوع مشروع محدد (ليطابق اللغة)
+            if (typeof projectType !== 'undefined' && projectType.value !== 'other') {
+                fillFromTemplate(projectType.value, false);
+            }
+        }
+
+        langToggle.addEventListener('click', () => {
+            applyLang(currentLang === 'ar' ? 'en' : 'ar');
+        });
+
+        // ===== الرسالة الترحيبية حسب الوقت المحلي =====
+        function showWelcomeMessage() {
+            const hour = new Date().getHours();
+            let emoji, messageKey;
+
+            if (hour >= 5 && hour < 12) {
+                emoji = '☀️';
+                messageKey = 'welcome_morning';
+            } else if (hour >= 12 && hour < 17) {
+                emoji = '🌤️';
+                messageKey = 'welcome_noon';
+            } else {
+                emoji = '🌙';
+                messageKey = 'welcome_evening';
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'welcome-toast';
+            toast.innerHTML =
+                '<span class="welcome-emoji">' + emoji + '</span>' +
+                '<span class="welcome-text">' + translations[currentLang][messageKey] + '</span>' +
+                '<div class="welcome-progress"></div>';
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 400);
+
+            const hideTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 600);
+            }, 4500);
+
+            toast.addEventListener('click', () => {
+                clearTimeout(hideTimer);
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 600);
+            });
+        }
+        window.addEventListener('load', showWelcomeMessage);
+
+        // ===== القائمة الجانبية مع دعم زر الرجوع والضغط خارجها =====
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const navbar = document.getElementById('navbar');
+        let mobileMenuOpen = false;
+
+        function openMobileMenu() {
+            navLinks.classList.add('open');
+            menuToggle.querySelector('i').className = 'fas fa-times';
+            mobileMenuOpen = true;
+            try {
+                history.pushState({ mobileMenu: true }, '');
+            } catch (e) {}
+        }
+
+        function closeMobileMenu(goBack = true) {
+            if (!mobileMenuOpen) return;
+            navLinks.classList.remove('open');
+            menuToggle.querySelector('i').className = 'fas fa-bars';
+            mobileMenuOpen = false;
+            if (goBack) {
+                try {
+                    if (history.state && history.state.mobileMenu) {
+                        history.back();
+                    }
+                } catch (e) {}
+            }
+        }
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (mobileMenuOpen) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (mobileMenuOpen && !navbar.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => closeMobileMenu());
+        });
+
+        // ===== الرابط النشط + شريط التقدم =====
+        const pageSections = document.querySelectorAll('section[id]');
+        const navAnchors = document.querySelectorAll('.nav-links a');
+        const progressBar = document.getElementById('progressBar');
+
+        function onScrollUpdate() {
+            let currentId = '';
+            pageSections.forEach(sec => {
+                if (window.scrollY >= sec.offsetTop - 130) currentId = sec.getAttribute('id');
+            });
+            navAnchors.forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+            });
+
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+            progressBar.style.width = pct + '%';
+        }
+        window.addEventListener('scroll', onScrollUpdate, { passive: true });
+        window.addEventListener('load', onScrollUpdate);
+
+        // ===== الظهور عند التمرير =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -20px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ===== مضاعفة شريط الأدوات =====
+        const marqueeTrack = document.getElementById('marqueeTrack');
+        marqueeTrack.innerHTML += marqueeTrack.innerHTML;
+
+        // ===== النافذة المنبثقة: أرسل فكرتك =====
+        const ideaOverlay = document.getElementById('ideaOverlay');
+        const ideaForm = document.getElementById('ideaForm');
+        const projectType = document.getElementById('projectType');
+        const ideaTitle = document.getElementById('ideaTitle');
+        const ideaDesc = document.getElementById('ideaDesc');
+        const sendIdeaBtn = document.getElementById('sendIdeaBtn');
+        const charCounter = document.getElementById('charCounter');
+
+        let ideaModalOpen = false;
+
+        function updateCharCounter() {
+            const len = ideaDesc.value.length;
+            charCounter.textContent = len + ' / 600';
+            charCounter.classList.toggle('warn', len >= 550);
+        }
+
+        function fillFromTemplate(key, animate = true) {
+            const template = projectTemplates[currentLang][key];
+            if (!template) return;
+
+            ideaTitle.value = template.title;
+            ideaDesc.value = template.desc;
+            updateCharCounter();
+
+            if (animate && key !== 'other') {
+                ideaTitle.classList.remove('auto-filled');
+                ideaDesc.classList.remove('auto-filled');
+                void ideaTitle.offsetWidth;
+                ideaTitle.classList.add('auto-filled');
+                ideaDesc.classList.add('auto-filled');
+
+                setTimeout(() => {
+                    ideaTitle.classList.remove('auto-filled');
+                    ideaDesc.classList.remove('auto-filled');
+                }, 600);
+            }
+
+            ideaTitle.classList.remove('field-error', 'shake');
+            ideaDesc.classList.remove('field-error', 'shake');
+
+            if (key === 'other') {
+                setTimeout(() => ideaTitle.focus(), 100);
+            }
+        }
+
+        projectType.addEventListener('change', () => {
+            fillFromTemplate(projectType.value, true);
+        });
+
+        function openIdeaModal() {
+            ideaOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            ideaModalOpen = true;
+            try {
+                history.pushState({ ideaModal: true }, '');
+            } catch (e) {}
+            setTimeout(() => projectType.focus(), 350);
+        }
+
+        function closeIdeaModal(goBack = true) {
+            if (!ideaModalOpen) return;
+            ideaOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+            ideaModalOpen = false;
+            if (goBack) {
+                try {
+                    if (history.state && history.state.ideaModal) {
+                        history.back();
+                    }
+                } catch (e) {}
+            }
+        }
+
+        window.addEventListener('popstate', () => {
+            if (mobileMenuOpen) {
+                closeMobileMenu(false);
+                return;
+            }
+            if (ideaModalOpen) {
+                ideaOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                ideaModalOpen = false;
+            }
+        });
+
+        ideaOverlay.addEventListener('click', (e) => {
+            if (e.target === ideaOverlay) closeIdeaModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (ideaModalOpen) closeIdeaModal();
+                if (mobileMenuOpen) closeMobileMenu();
+            }
+        });
+
+        ideaDesc.addEventListener('input', updateCharCounter);
+
+        [projectType, ideaTitle, ideaDesc].forEach(field => {
+            field.addEventListener('input', () => {
+                field.classList.remove('field-error', 'shake');
+            });
+            field.addEventListener('change', () => {
+                field.classList.remove('field-error', 'shake');
+            });
+        });
+
+        ideaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let valid = true;
+            [ideaTitle, ideaDesc].forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('field-error', 'shake');
+                    valid = false;
+                } else {
+                    field.classList.remove('field-error', 'shake');
+                }
+            });
+            if (!valid) return;
+
+            const t = translations[currentLang];
+            const selectedType = projectType.options[projectType.selectedIndex].text.replace(/^[^\p{L}&]+/u, '').trim();
+
+            const message =
+                t.wa_greeting + '\n' +
+                t.wa_intro + '\n\n' +
+                t.wa_type + selectedType + '\n\n' +
+                t.wa_title + ideaTitle.value.trim() + '\n\n' +
+                t.wa_desc + ideaDesc.value.trim();
+
+            const waUrl = 'https://wa.me/966561365019?text=' + encodeURIComponent(message);
+            window.open(waUrl, '_blank');
+
+            sendIdeaBtn.classList.add('sent');
+            sendIdeaBtn.innerHTML = t.sent_btn;
+
+            setTimeout(() => {
+                closeIdeaModal();
+                ideaForm.reset();
+                projectType.value = 'other';
+                charCounter.textContent = '0 / 600';
+                charCounter.classList.remove('warn');
+                sendIdeaBtn.classList.remove('sent');
+                sendIdeaBtn.innerHTML = t.send_btn;
+            }, 1500);
+        });
+
+        // ===== تطبيق اللغة المحفوظة عند البدء =====
+        applyLang(currentLang);
+    </script>
+</body>
+</html>
